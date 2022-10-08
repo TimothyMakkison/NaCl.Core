@@ -4,6 +4,12 @@
     using System.Buffers;
     using System.Security.Cryptography;
 
+#if INTRINSICS
+    using System.Runtime.Intrinsics;
+    using System.Runtime.Intrinsics.X86;
+    using System.Runtime.InteropServices;
+#endif
+
     /// <summary>
     /// Abstract base class for XSalsa20, ChaCha20, XChaCha20 and their variants.
     /// </summary>
@@ -114,9 +120,9 @@
         }
 
 
-#if INTRINSICS
-        private void Process(ReadOnlySpan<byte> nonce, Span<byte> output, ReadOnlySpan<byte> input, int offset = 0) => ProcessStream(nonce, output, input, InitialCounter, offset);
-#else
+//#if INTRINSICS
+//        private void Process(ReadOnlySpan<byte> nonce, Span<byte> output, ReadOnlySpan<byte> input, int offset = 0) => ProcessStream(nonce, output, input, InitialCounter, offset);
+//#else
         /// <summary>
         /// Processes the Encryption/Decryption function.
         /// </summary>
@@ -159,7 +165,7 @@
                 owner.Memory.Span.Clear();
             }
         }
-#endif
+//#endif
 
         /// <summary>
         /// Formats the nonce length exception message.
@@ -184,12 +190,33 @@
         {
             var blockOffset = curBlock * BlockSizeInBytes;
 
+#if INTRINSICS
+            if(len % 16 == 0)
+            {
+                Span<Vector256<byte>> resultVectors = MemoryMarshal.Cast<byte, Vector256<byte>>(output.Slice(offset,len));
+
+                ReadOnlySpan<Vector256<byte>> inputVectors = MemoryMarshal.Cast<byte, Vector256<byte>>(input);
+
+                ReadOnlySpan<Vector256<byte>> blockVectors = MemoryMarshal.Cast<byte, Vector256<byte>>(block);
+
+                for (var i = 0; i < resultVectors.Length; i++)
+                {
+                    resultVectors[i] = Avx2.Xor(inputVectors[i], blockVectors[i]);
+                }
+            }
+            else
+            {
+                for (var i = 0; i < len; i++)
+                    output[i + offset + blockOffset] = (byte)(input[i + blockOffset] ^ block[i]);
+            }
+#else
             // Since is not called directly from outside, there's no need to check
             //if (len < 0 || offset < 0 || curBlock < 0 || output.Length < len || (input.Length - blockOffset) < len || block.Length < len)
             //    throw new CryptographicException("The combination of blocks, offsets and length to be XORed is out-of-bonds.");
 
             for (var i = 0; i < len; i++)
                 output[i + offset + blockOffset] = (byte)(input[i + blockOffset] ^ block[i]);
+#endif
         }
     }
 }

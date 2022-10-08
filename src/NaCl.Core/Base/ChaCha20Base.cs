@@ -34,6 +34,12 @@
         /// <inheritdoc />
         public override void ProcessKeyStreamBlock(ReadOnlySpan<byte> nonce, int counter, Span<byte> block)
         {
+#if INTRINSICS
+            if (block.Length != BLOCK_SIZE_IN_BYTES)
+                throw new CryptographicException($"The key stream block length is not valid. The length in bytes must be {BLOCK_SIZE_IN_BYTES}.");
+            ProcessStream(nonce, block, block, counter);
+
+#else
             if (block.Length != BLOCK_SIZE_IN_BYTES)
                 throw new CryptographicException($"The key stream block length is not valid. The length in bytes must be {BLOCK_SIZE_IN_BYTES}.");
 
@@ -52,6 +58,8 @@
                 state[i] += workingState[i];
 
             ArrayUtils.StoreArray16UInt32LittleEndian(block, 0, state);
+#endif
+
         }
 
 #if INTRINSICS
