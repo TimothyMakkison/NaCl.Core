@@ -112,7 +112,14 @@ namespace NaCl.Core.Base
                     t_6 = Avx2.Permute2x128(x_2, x_6, 0x31);
                     t_3 = Avx2.Permute2x128(x_3, x_7, 0x20);
                     t_7 = Avx2.Permute2x128(x_3, x_7, 0x31);
-                   
+                    t_0 = Avx2.Xor(t_0, Avx.LoadVector256(m).AsUInt32());
+                    t_1 = Avx2.Xor(t_1, Avx.LoadVector256(m + 64).AsUInt32());
+                    t_2 = Avx2.Xor(t_2, Avx.LoadVector256(m + 128).AsUInt32());
+                    t_3 = Avx2.Xor(t_3, Avx.LoadVector256(m + 192).AsUInt32());
+                    t_4 = Avx2.Xor(t_4, Avx.LoadVector256(m + 256).AsUInt32());
+                    t_5 = Avx2.Xor(t_5, Avx.LoadVector256(m + 320).AsUInt32());
+                    t_6 = Avx2.Xor(t_6, Avx.LoadVector256(m + 384).AsUInt32());
+                    t_7 = Avx2.Xor(t_7, Avx.LoadVector256(m + 448).AsUInt32());
                     Avx.Store(c, t_0.AsByte());
                     Avx.Store(c + 64, t_1.AsByte());
                     Avx.Store(c + 128, t_2.AsByte());
@@ -137,7 +144,14 @@ namespace NaCl.Core.Base
                     t_14 = Avx2.Permute2x128(x_10, x_14, 0x31);
                     t_11 = Avx2.Permute2x128(x_11, x_15, 0x20);
                     t_15 = Avx2.Permute2x128(x_11, x_15, 0x31);
-                   
+                    t_8 = Avx2.Xor(t_8, Avx.LoadVector256(m).AsUInt32());
+                    t_9 = Avx2.Xor(t_9, Avx.LoadVector256(m + 64).AsUInt32());
+                    t_10 = Avx2.Xor(t_10, Avx.LoadVector256(m + 128).AsUInt32());
+                    t_11 = Avx2.Xor(t_11, Avx.LoadVector256(m + 192).AsUInt32());
+                    t_12 = Avx2.Xor(t_12, Avx.LoadVector256(m + 256).AsUInt32());
+                    t_13 = Avx2.Xor(t_13, Avx.LoadVector256(m + 320).AsUInt32());
+                    t_14 = Avx2.Xor(t_14, Avx.LoadVector256(m + 384).AsUInt32());
+                    t_15 = Avx2.Xor(t_15, Avx.LoadVector256(m + 448).AsUInt32());
                     Avx.Store(c, t_8.AsByte());
                     Avx.Store(c + 64, t_9.AsByte());
                     Avx.Store(c + 128, t_10.AsByte());
@@ -329,7 +343,10 @@ namespace NaCl.Core.Base
                 x_1 = Sse2.Add(x_1, Sse2.LoadVector128(x + 4));
                 x_2 = Sse2.Add(x_2, Sse2.LoadVector128(x + 8));
                 x_3 = Sse2.Add(x_3, Sse2.LoadVector128(x + 12));
-               
+                x_0 = Sse2.Xor(x_0.AsByte(), Sse2.LoadVector128(m)).AsUInt32();
+                x_1 = Sse2.Xor(x_1.AsByte(), Sse2.LoadVector128(m + 16)).AsUInt32();
+                x_2 = Sse2.Xor(x_2.AsByte(), Sse2.LoadVector128(m + 32)).AsUInt32();
+                x_3 = Sse2.Xor(x_3.AsByte(), Sse2.LoadVector128(m + 48)).AsUInt32();
                 Sse2.Store(c, x_0.AsByte());
                 Sse2.Store(c + 16, x_1.AsByte());
                 Sse2.Store(c + 32, x_2.AsByte());
@@ -424,7 +441,7 @@ namespace NaCl.Core.Base
 
                 for (ulong i = 0; i < bytes; i++)
                 {
-                    c[i] = (byte)(partialblock[i]);
+                    c[i] = (byte)(m[i] ^ partialblock[i]);
                 }
                 for (int n = 0; n < 64 / sizeof(int); n++)
                 {

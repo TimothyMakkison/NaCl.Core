@@ -120,9 +120,9 @@
         }
 
 
-//#if INTRINSICS
-//        private void Process(ReadOnlySpan<byte> nonce, Span<byte> output, ReadOnlySpan<byte> input, int offset = 0) => ProcessStream(nonce, output, input, InitialCounter, offset);
-//#else
+#if INTRINSICS
+        private void Process(ReadOnlySpan<byte> nonce, Span<byte> output, ReadOnlySpan<byte> input, int offset = 0) => ProcessStream(nonce, output, input, InitialCounter, offset);
+#else
         /// <summary>
         /// Processes the Encryption/Decryption function.
         /// </summary>
@@ -165,7 +165,7 @@
                 owner.Memory.Span.Clear();
             }
         }
-//#endif
+#endif
 
         /// <summary>
         /// Formats the nonce length exception message.

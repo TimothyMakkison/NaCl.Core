@@ -31,13 +31,19 @@
         /// <param name="counter">The counter.</param>
         protected abstract void SetInitialState(Span<uint> state, ReadOnlySpan<byte> nonce, int counter);
 
+#if INTRINSICS
+
+        private static byte[] _zeros = new byte[BLOCK_SIZE_IN_BYTES];
+#endif
+
         /// <inheritdoc />
         public override void ProcessKeyStreamBlock(ReadOnlySpan<byte> nonce, int counter, Span<byte> block)
         {
 #if INTRINSICS
             if (block.Length != BLOCK_SIZE_IN_BYTES)
                 throw new CryptographicException($"The key stream block length is not valid. The length in bytes must be {BLOCK_SIZE_IN_BYTES}.");
-            ProcessStream(nonce, block, block, counter);
+
+            ProcessStream(nonce, block, _zeros, counter);
 
 #else
             if (block.Length != BLOCK_SIZE_IN_BYTES)
