@@ -8,10 +8,12 @@
     using Internal;
 
     using BenchmarkDotNet.Attributes;
+    using Xunit;
+    using static NaCl.Core.Tests.Vectors.WycheproofVector.TestGroup;
 
     [BenchmarkCategory("Stream Cipher")]
     [MemoryDiagnoser]
-    [RPlotExporter, RankColumn]
+    [RPlotExporter, RankColumn, HtmlExporter]
     public class ChaCha20Benchmark
     {
         private static readonly Random rnd = new Random(42);
@@ -19,15 +21,14 @@
         private Memory<byte> key;
         private Memory<byte> nonce;
         private Memory<byte> message;
+        private Memory<byte> cipherText;
         private ChaCha20 cipher;
 
         [Params(
             (int)1E+2,  // 100 bytes
             (int)1E+3,  // 1 000 bytes = 1 KB
-            (int)1E+4,  // 10 000 bytes = 10 KB
-            (int)1E+5,  // 100 000 bytes = 100 KB
-            (int)1E+6,  // 1 000 000 bytes = 1 MB
-            (int)1E+7)] // 10 000 000 bytes = 10 MB
+            (int)1E+5  // 100 000 bytes = 100 KB
+            )] // 10 000 000 b
         public int Size { get; set; }
 
         [GlobalSetup]
@@ -43,24 +44,26 @@
             rnd.NextBytes(message.Span);
 
             cipher = new ChaCha20(key, 0);
+
+            cipherText = new byte[Size];
+            new ChaCha20(key, 0).Encrypt(message.Span, nonce.Span, cipherText.Span);
         }
 
         [Benchmark]
         [BenchmarkCategory("Encryption")]
         public void Encrypt()
         {
-            var ciphertext = new byte[message.Length];
-            cipher.Encrypt(message.Span, nonce.Span, ciphertext);
+            var localCipherText = new byte[message.Length];
+            cipher.Encrypt(message.Span, nonce.Span, localCipherText);
         }
 
         [Benchmark]
         [BenchmarkCategory("Decryption")]
-        [ArgumentsSource(nameof(TestVectors))]
-        public void Decrypt(Tests.Vectors.Rfc8439TestVector test)
+        //[ArgumentsSource(nameof(TestVectors))]
+        public void Decrypt()
         {
-            var plaintext = new byte[test.CipherText.Length];
-            var cipher = new ChaCha20(test.Key, test.InitialCounter);
-            cipher.Decrypt(test.CipherText, test.Nonce, plaintext);
+            var plaintext = new byte[Size];
+            cipher.Decrypt(cipherText.Span, nonce.Span, plaintext);
         }
 
         public IEnumerable<object> TestVectors()
