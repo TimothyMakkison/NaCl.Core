@@ -53,6 +53,13 @@
             ArrayUtils.StoreArray16UInt32LittleEndian(block, 0, state);
         }
 
+#if INTRINSICS
+        public override unsafe void ProcessStream(ReadOnlySpan<byte> nonce, Span<byte> output, ReadOnlySpan<byte> input, int initialCounter, int offset = 0)
+        {
+            throw new NotImplementedException();
+        }
+#endif
+
         /// <summary>
         /// Process a pseudorandom key stream block, converting the key and part of the <paramref name="nonce"/> into a <paramref name="subKey"/>, and the remainder of the <paramref name="nonce"/>.
         /// </summary>
