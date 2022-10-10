@@ -6,6 +6,11 @@
 
     using Internal;
 
+#if INTRINSICS
+    using System.Runtime.Intrinsics.X86;
+    using System.Linq;
+#endif
+
     /// <summary>
     /// Base class for <seealso cref="NaCl.Core.ChaCha20" /> and <seealso cref="NaCl.Core.XChaCha20" />.
     /// </summary>
@@ -39,16 +44,17 @@
         /// <inheritdoc />
         public override void ProcessKeyStreamBlock(ReadOnlySpan<byte> nonce, int counter, Span<byte> block)
         {
+
+            if (block.Length != BLOCK_SIZE_IN_BYTES)
+                throw new CryptographicException($"The key stream block length is not valid. The length in bytes must be {BLOCK_SIZE_IN_BYTES}.");
 #if INTRINSICS
-            if (block.Length != BLOCK_SIZE_IN_BYTES)
-                throw new CryptographicException($"The key stream block length is not valid. The length in bytes must be {BLOCK_SIZE_IN_BYTES}.");
 
-            ProcessStream(nonce, block, _zeros, counter);
+            if (Sse2.IsSupported)
+            {
+                ProcessStream(nonce, block, _zeros, counter);
+            }
 
-#else
-            if (block.Length != BLOCK_SIZE_IN_BYTES)
-                throw new CryptographicException($"The key stream block length is not valid. The length in bytes must be {BLOCK_SIZE_IN_BYTES}.");
-
+#endif
             // Set the initial state based on https://tools.ietf.org/html/rfc8439#section-2.3
             Span<uint> state = stackalloc uint[BLOCK_SIZE_IN_INTS];
             SetInitialState(state, nonce, counter);
@@ -63,9 +69,16 @@
             for (var i = 0; i < BLOCK_SIZE_IN_INTS; i++)
                 state[i] += workingState[i];
 
-            ArrayUtils.StoreArray16UInt32LittleEndian(block, 0, state);
-#endif
+            var b = new byte[64];
+            ArrayUtils.StoreArray16UInt32LittleEndian(b, 0, state);
 
+#if INTRINSICS
+            var s = Enumerable.SequenceEqual(b, block.ToArray());
+            if (!s)
+            {
+
+            }
+#endif
         }
 
 #if INTRINSICS

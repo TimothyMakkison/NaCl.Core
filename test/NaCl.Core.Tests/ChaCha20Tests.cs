@@ -313,23 +313,23 @@
             output.ToUInt16Array().Should().Equal(expected);
         }
 
-        [Fact]
-        public void ChaCha20TestVector()
+        public static IEnumerable<object[]> Data => Rfc8439TestVector.Rfc8439TestVectors.Select(d=> new object[] { d});
+
+        [Theory]
+        [MemberData(nameof(Data))]
+        public void ChaCha20TestVector(Rfc8439TestVector test)
         {
             // https://tools.ietf.org/html/rfc8439#section-2.4.2
 
             // Arrange
-            foreach (var test in Rfc8439TestVector.Rfc8439TestVectors)
-            {
-                // Act
-                var cipher = new ChaCha20(test.Key, test.InitialCounter);
+            // Act
+            var cipher = new ChaCha20(test.Key, test.InitialCounter);
 
-                var output = new byte[test.CipherText.Length];
-                cipher.Decrypt(test.CipherText, test.Nonce, output);
+            var output = new byte[test.CipherText.Length];
+            cipher.Decrypt(test.CipherText, test.Nonce, output);
 
-                // Assert
-                output.Should().Equal(test.PlainText);
-            }
+            // Assert
+            output.Should().Equal(test.PlainText);
         }
 
         [Fact]
