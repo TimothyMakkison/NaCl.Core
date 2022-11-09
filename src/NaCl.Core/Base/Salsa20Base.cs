@@ -65,7 +65,7 @@ public abstract class Salsa20Base : Snuffle
     {
         Span<uint> state = stackalloc uint[BLOCK_SIZE_IN_INTS];
         SetInitialState(state, nonce, initialCounter);
-        var c = output.Slice(offset);
+        var c = output[offset..];
 
         Salsa20BaseIntrinsics.Salsa20(state, input, c, (ulong)input.Length);
     }

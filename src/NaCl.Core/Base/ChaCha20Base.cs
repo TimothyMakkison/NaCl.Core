@@ -66,7 +66,7 @@ public abstract class ChaCha20Base : Snuffle
     {
         Span<uint> state = stackalloc uint[BLOCK_SIZE_IN_INTS];
         SetInitialState(state, nonce, initialCounter);
-        var c = output.Slice(offset);
+        var c = output[offset..];
 
         ChaCha20BaseIntrinsics.ChaCha20(state, input, c, (ulong)input.Length);
     }

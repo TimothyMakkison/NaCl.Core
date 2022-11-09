@@ -73,13 +73,6 @@ public static class TestHelpers
         }
     }
 
-    private static byte[] ToArray(this ArraySegment<byte> segment)
-    {
-        var result = new byte[segment.Count];
-        Array.Copy(segment.Array, segment.Offset, result, 0, segment.Count);
-        return result;
-    }
-
     public static uint[] ToUInt16Array(this byte[] source)
     {
         var decoded = new uint[source.Length / 4];
