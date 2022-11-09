@@ -19,7 +19,7 @@
         public void ComputeMacWhenKeyLengthIsGreaterThan32Fails()
         {
             // Arrange, Act & Assert
-            Action act = () => Poly1305.ComputeMac(new byte[Poly1305.MAC_KEY_SIZE_IN_BYTES + 1], new byte[0]);
+            Action act = () => Poly1305.ComputeMac(new byte[Poly1305.MAC_KEY_SIZE_IN_BYTES + 1], Array.Empty<byte>());
             act.Should().Throw<CryptographicException>();
         }
 
@@ -27,7 +27,7 @@
         public void ComputeMacWhenKeyLengthIsLessThan32Fails()
         {
             // Arrange, Act & Assert
-            Action act = () => Poly1305.ComputeMac(new byte[Poly1305.MAC_KEY_SIZE_IN_BYTES - 1], new byte[0]);
+            Action act = () => Poly1305.ComputeMac(new byte[Poly1305.MAC_KEY_SIZE_IN_BYTES - 1], Array.Empty<byte>());
             act.Should().Throw<CryptographicException>();
         }
 
@@ -35,7 +35,7 @@
         public void VerifyMacWhenKeyLengthIsGreaterThan32Fails()
         {
             // Arrange, Act & Assert
-            Action act = () => Poly1305.VerifyMac(new byte[Poly1305.MAC_KEY_SIZE_IN_BYTES + 1], new byte[0], new byte[0]);
+            Action act = () => Poly1305.VerifyMac(new byte[Poly1305.MAC_KEY_SIZE_IN_BYTES + 1], Array.Empty<byte>(), Array.Empty<byte>());
             act.Should().Throw<CryptographicException>();
         }
 
@@ -43,7 +43,7 @@
         public void VerifyMacWhenKeyLengthIsLessThan32Fails()
         {
             // Arrange, Act & Assert
-            Action act = () => Poly1305.VerifyMac(new byte[Poly1305.MAC_KEY_SIZE_IN_BYTES - 1], new byte[0], new byte[0]);
+            Action act = () => Poly1305.VerifyMac(new byte[Poly1305.MAC_KEY_SIZE_IN_BYTES - 1], Array.Empty<byte>(), Array.Empty<byte>());
             act.Should().Throw<CryptographicException>();
         }
 
@@ -51,7 +51,7 @@
         public void VerifyMacWhenTagLengthIsInvalidFails()
         {
             // Arrange, Act & Assert
-            Action act = () => Poly1305.VerifyMac(new byte[Poly1305.MAC_KEY_SIZE_IN_BYTES], new byte[0], new byte[Poly1305.MAC_TAG_SIZE_IN_BYTES + TestHelpers.ReturnRandomPositiveNegative()]);
+            Action act = () => Poly1305.VerifyMac(new byte[Poly1305.MAC_KEY_SIZE_IN_BYTES], Array.Empty<byte>(), new byte[Poly1305.MAC_TAG_SIZE_IN_BYTES + TestHelpers.ReturnRandomPositiveNegative()]);
             act.Should().Throw<CryptographicException>().WithMessage(EXCEPTION_MESSAGE_TAG_LENGTH);
         }
 
@@ -59,7 +59,7 @@
         public void VerifyMacWhenTagLengthIsEmptyFails()
         {
             // Arrange, Act & Assert
-            Action act = () => Poly1305.VerifyMac(new byte[Poly1305.MAC_KEY_SIZE_IN_BYTES], new byte[0], new byte[0]);
+            Action act = () => Poly1305.VerifyMac(new byte[Poly1305.MAC_KEY_SIZE_IN_BYTES], Array.Empty<byte>(), Array.Empty<byte>());
             act.Should().Throw<CryptographicException>().WithMessage(EXCEPTION_MESSAGE_TAG_LENGTH);
         }
 

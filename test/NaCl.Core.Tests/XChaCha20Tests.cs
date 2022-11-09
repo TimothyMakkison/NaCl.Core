@@ -46,8 +46,8 @@
         {
             // Arrange
             var nonce = new byte[XChaCha20.NONCE_SIZE_IN_BYTES + TestHelpers.ReturnRandomPositiveNegative()];
-            var plaintext = new byte[0];
-            var ciphertext = new byte[0];
+            var plaintext = Array.Empty<byte>();
+            var ciphertext = Array.Empty<byte>();
 
             var cipher = new XChaCha20(new byte[Snuffle.KEY_SIZE_IN_BYTES], 0);
 
@@ -60,9 +60,9 @@
         public void EncryptWhenNonceIsEmptyFails()
         {
             // Arrange
-            var nonce = new byte[0];
-            var plaintext = new byte[0];
-            var ciphertext = new byte[0];
+            var nonce = Array.Empty<byte>();
+            var plaintext = Array.Empty<byte>();
+            var ciphertext = Array.Empty<byte>();
 
             var cipher = new XChaCha20(new byte[Snuffle.KEY_SIZE_IN_BYTES], 0);
 
@@ -76,8 +76,8 @@
         {
             // Arrange
             var nonce = new byte[XChaCha20.NONCE_SIZE_IN_BYTES + TestHelpers.ReturnRandomPositiveNegative()];
-            var plaintext = new byte[0];
-            var ciphertext = new byte[0];
+            var plaintext = Array.Empty<byte>();
+            var ciphertext = Array.Empty<byte>();
 
             var cipher = new XChaCha20(new byte[Snuffle.KEY_SIZE_IN_BYTES], 0);
 
@@ -90,9 +90,9 @@
         public void DecryptWhenNonceIsEmptyFails()
         {
             // Arrange
-            var nonce = new byte[0];
-            var plaintext = new byte[0];
-            var ciphertext = new byte[0];
+            var nonce = Array.Empty<byte>();
+            var plaintext = Array.Empty<byte>();
+            var ciphertext = Array.Empty<byte>();
 
             var cipher = new XChaCha20(new byte[Snuffle.KEY_SIZE_IN_BYTES], 0);
 
@@ -190,7 +190,7 @@
             var key = new byte[Snuffle.KEY_SIZE_IN_BYTES];
 
             var cipher = new XChaCha20(key, 0);
-            var nonce = new byte[0];
+            var nonce = Array.Empty<byte>();
             var block = new byte[ChaCha20.BLOCK_SIZE_IN_BYTES];
 
             // Act & Assert
@@ -221,7 +221,7 @@
 
             var cipher = new XChaCha20(key, 0);
             var nonce = new byte[XChaCha20.NONCE_SIZE_IN_BYTES + TestHelpers.ReturnRandomPositiveNegative()];
-            var block = new byte[0];
+            var block = Array.Empty<byte>();
 
             // Act & Assert
             var act = () => cipher.ProcessKeyStreamBlock(nonce, 0, block);
