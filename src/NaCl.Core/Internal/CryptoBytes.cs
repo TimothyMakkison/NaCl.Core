@@ -31,10 +31,10 @@ public static class CryptoBytes
     public static bool ConstantTimeEquals(ArraySegment<byte> x, ArraySegment<byte> y)
     {
         if (x.Array is null)
-            throw new ArgumentNullException("x.Array");
+            throw new ArgumentException($"Property {nameof(x.Array)} cannot be null.", nameof(x));
 
         if (y.Array is null)
-            throw new ArgumentNullException("y.Array");
+            throw new ArgumentException($"Property {nameof(y.Array)} cannot be null.", nameof(y));
 
         if (x.Count != y.Count)
             throw new ArgumentException("x.Count must equal y.Count");
@@ -48,15 +48,15 @@ public static class CryptoBytes
             throw new ArgumentNullException(nameof(x));
 
         if (xOffset < 0)
-            throw new ArgumentOutOfRangeException("xOffset", "xOffset < 0");
+            throw new ArgumentOutOfRangeException(nameof(xOffset), "xOffset < 0");
         if (y == null)
             throw new ArgumentNullException(nameof(y));
 
         if (yOffset < 0)
-            throw new ArgumentOutOfRangeException("yOffset", "yOffset < 0");
+            throw new ArgumentOutOfRangeException(nameof(yOffset), "yOffset < 0");
 
         if (length < 0)
-            throw new ArgumentOutOfRangeException("length", "length < 0");
+            throw new ArgumentOutOfRangeException(nameof(length), "length < 0");
 
         if (x.Length - xOffset < length)
             throw new ArgumentException("xOffset + length > x.Length");
@@ -104,7 +104,7 @@ public static class CryptoBytes
     public static void Wipe(ArraySegment<byte> data)
     {
         if (data.Array is null)
-            throw new ArgumentNullException("data.Array");
+            throw new ArgumentException($"Property {nameof(data.Array)} cannot be null.", nameof(data));
 
         InternalWipe(data.Array, data.Offset, data.Count);
     }
